@@ -1,0 +1,84 @@
+20141125:
+修改index.pl
+修改main函数,使得点击upload按钮后,提示正在验证:
+
+修改后:
+print <<HTML;
+	<HTML>
+	<HEAD>
+	<TITLE>统一计费验证平台</TITLE>
+	<script>
+	function showtips()
+	{
+	document.getElementById("tips").innerHTML="正在验证,请稍候...";
+	}
+	</script>
+	</HEAD>
+	<BODY>
+	<a href="./index.pl">话单验证</a>
+	<a href="./ZYNO/main.pl"> 综语中继查询</a>
+	<H1>Hello World
+	
+	<FORM ACTION=./index.pl METHOD="POST" ENCTYPE="multipart/form-data" >
+	<INPUT TYPE="FILE" NAME="file">
+	<input type=hidden name=out value="$outfile">
+	<input type=submit name=action value="UpLoad" onclick="showtips()">
+	<input type=submit name=action value="DownLoad">
+	
+	<H2>
+	请选择话单类型 <BR>
+	<!--<input type=radio name=cdr value=rnc>RNC语音话单<BR>-->
+	<!--<input type=radio name=cdr value=msc>MSC语音话单<BR>-->
+	<input type=radio name=cdr value=rnc>语音话单<BR>
+	<input type=radio name=cdr value=zy>综语话单<BR>
+	<input type=radio name=cdr value=gprs>GPRS话单<BR>
+	
+	<br>
+	<p id="tips">$info</p>
+	</FORM>
+	</BODY>
+	</HTML>
+HTML
+
+修改前:
+print <<HTML;
+	<HTML>
+	<HEAD>
+	<TITLE>统一计费验证平台</TITLE>
+	</HEAD>
+	<BODY>
+	<a href="./index.pl">话单验证</a>
+	<a href="./ZYNO/main.pl"> 综语中继查询</a>
+	<H1>Hello World
+	
+	<FORM ACTION=./index.pl METHOD="POST" ENCTYPE="multipart/form-data" >
+	<INPUT TYPE="FILE" NAME="file">
+	<input type=hidden name=out value="$outfile">
+	<input type=submit name=action value="UpLoad">
+	<input type=submit name=action value="DownLoad">
+	
+	<H2>
+	请选择话单类型 <BR>
+	<!--<input type=radio name=cdr value=rnc>RNC语音话单<BR>-->
+	<!--<input type=radio name=cdr value=msc>MSC语音话单<BR>-->
+	<input type=radio name=cdr value=rnc>语音话单<BR>
+	<input type=radio name=cdr value=zy>综语话单<BR>
+	<input type=radio name=cdr value=gprs>GPRS话单<BR>
+	
+	<br>
+	$info
+	</FORM>
+	</BODY>
+	</HTML>
+HTML
+
+20141125:
+修改index.pl
+修改验证结束后提示语句,若不是全部通过,则增加警告提示:
+
+修改后:
+main("验证结束,请点击下载",$outfile) if($sts==0);
+main("验证结束,请点击下载<br><font color=red>警告:部分话单验证失败,请检查!",$outfile) if($sts==1);
+
+修改前:
+main("验证结束,请点击下载",$outfile);

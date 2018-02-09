@@ -1,0 +1,7 @@
+20141029:
+修改zyfetcher.pm
+将综语话单验证过程中,根据中继号取serv_id的语句增加order by valid_time desc排序语句,以免同时找到两条时,取到已失效的数据
+
+20141215:
+修改zyfetcher.pm
+综语话单验证时,若中继号不存在,则返回TRKERRO.(以前是返回0,导致程序报错)

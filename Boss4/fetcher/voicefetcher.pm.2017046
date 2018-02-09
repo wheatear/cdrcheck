@@ -1,0 +1,60 @@
+package voicefetcher;
+#fetch voice cdr
+use lib qw(../lib);
+use SOAP::Lite;
+use conf;
+use util;
+use Date;
+use fetcher;
+
+#inherited from fetcher class
+@ISA = qw(fetcher);
+
+use strict;
+
+ 
+sub fetch{
+	my $class = shift; 
+	my $cdr   = shift;
+	my $day   = shift;				#specify a day
+	my ($phone,$opp,$start) = ($cdr->{phone},$cdr->{opp},$cdr->{start}->toStr());
+	my $re = [];
+	$start		=	"to_date(\'$start\', \'yyyymmddhh24miss\')";
+	my $sql  =  qq (
+	Select
+	t.user_number                                         phone,
+	t.opp_number                                          opp,
+	t.a_number                                            third,
+	to_char(t.start_time,'yyyymmdd')                      day, 
+	to_char(t.start_time,'hh24miss')                      "START", 
+	to_char(t.start_time+duration/(24*60*60),'hh24miss')  "END",
+	t.original_file                                       chu
+	from jf.dr_cs_100_$day t
+	where
+	user_number in\('$phone','$opp'\) 
+	and    start_time between $start-10/(24*60*60) and $start+10/(24*60*60) 
+	order by t.start_time);
+ 
+	p_log("excecute $sql");
+	
+	#fetch from webservice
+	$re = SOAP::Lite
+	-> uri(URI)
+	-> proxy(PROXY)
+	-> fetch(DB,USR,PSW,$sql)->result;
+	
+	p_log($re);
+	
+	return DBERRO     if ($re =~ m/^1{1}/g);
+	return SQLERRO    if ($re =~ m/^2{1}/g);
+	return SQLERRO    if ($re =~ m/^3{1}/g);
+	
+	p_log("Fetch ".(scalar @$re)." Records");
+	
+	foreach (@$re) {
+		$_ = [1,1.1,1,1,$_->{PHONE},$_->{OPP},$_->{THIRD},$_->{DAY},$_->{START},$_->{END},$_->{CHU}];
+	}
+	return $re;
+}
+ 
+1;

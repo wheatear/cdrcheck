@@ -1,0 +1,13 @@
+更新说明:
+在上一版基础之上新增以APN统一计费的GPRS话单的验证。
+
+20170412 更新说明：
+X86项目，详单移到MongoDB库，杭研提供socket接口查询MongoDB库。查询详单改为通过socket接口调用杭研提供服务。
+修改清单：
+cdr::cdr.pm
+fetcher::gprsfetcher.pm
+fetcher::voicefetcher.pm
+fetcher::zyfetcher.pm
+proxy::proxy.pl
+lib::Date.pm
+lib::conf.pm

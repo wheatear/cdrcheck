@@ -1,0 +1,49 @@
+2014年8月7日,修改综语话单验证时的中继群号匹配规则,由匹配4位数字修改为匹配4-5位数字.
+
+20141215:
+修改task.pm--validate_all函数
+1.添加TRKERRO状态
+2.添加FLAG,用于判断验证结果是否全部通过
+修改后:
+sub validate_all {
+	my $this = shift;
+	my $list = shift;
+	my @list = @$list;
+	my $sts;
+	my $flag=0;
+	foreach (@list) {
+		if ($_->{sts} ne READY){
+			$flag=1 if ($_->{sts} ne '');
+			next;
+		}
+		$sts = $_->validate();
+		if ($sts==DBERRO){
+			$flag=1;
+			$_->{sts} = "无法连接数据库";
+		}elsif($sts==SQLERRO){
+			$flag=1;
+			$_->{sts} = "无法执行SQL,可能是表已经过期了,请检查一下话单日期";
+		}elsif($sts==TRKERRO){
+			$flag=1;
+			$_->{sts} = "中继号信息不存在";
+		}else{
+			$flag=1 if ($_->{sts} eq BAD or $_->{sts} eq FAIL);
+		}
+	}
+	return $flag;
+}
+
+修改前:
+sub validate_all {
+	my $this = shift;
+	my $list = shift;
+	my @list = @$list;
+	my $sts;
+	foreach (@list) {
+		next if ($_->{sts} ne READY);
+		$sts = $_->validate();
+		$_->{sts} = "无法连接数据库" if ($sts==DBERRO);	
+		$_->{sts} = "无法执行SQL,可能是表已经过期了,请检查一下话单日期" if ($sts==SQLERRO);	
+	}
+	return 0;
+}
