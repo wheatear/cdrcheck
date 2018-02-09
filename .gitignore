@@ -21,8 +21,8 @@ nytprof.out
 #cdr check
 *.bak
 *.log
+*.xls
 in/
 Boss4/out/
-Boss4/log/
+#Boss4/log/
 #Boss4/ZYNO/log
-
